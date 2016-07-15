@@ -1,0 +1,159 @@
+1. Introduction
+======================================================================
+
+Their are two versions of the plugin.
+
+    * the GMS-2.X version, which is build using Visual Studio 2008
+      and obviously requires the DMSDK for GMS 2.X
+
+    * the GMS-1.X version, which is build using Visual Studio 2003
+      and obviously requires the DMSDK for GMS 1.X (aka DMSDK382)
+
+For the DMSDKs contact Gatan or look on their website www.gatan.com.
+
+2. Prerequisites
+======================================================================
+
+The DMSDK must running work (examples will compile), so any prerequisites
+for the DMSDK (e.g. boost) must be properly installed.
+
+The plugin depends on some 3rdparty libraries (for example the HDF5 library...).
+These must be separately downloaded and unpacked or linked to the directory
+names mentioned below
+
+Required libraries:
+    utfcpp
+        * see http://utfcpp.sourceforge.net
+        * version 2.3.1A was used for building the plugin
+        * unpack to 3rdparty/utfcpp
+    
+    zlib
+        * see http://zlib.org
+        * version 1.2.8 was used for building the plugin
+        * unpack to 3rdparty/zlib
+        
+    szip
+        * see http://www.hdfgroup.org/HDF5
+        * version version 2.1 was used for building the plugin
+        * unpack to 3rdparty/szip
+        * As there are special licensing issues with this library, the 
+          compression is disabled by the build instructions below. The 
+          decompression has no licensing problems.
+        
+    hdf5
+        * see http//www.hdfgroup.org/HDF5
+        * Version 1.8.8 was used for the GMS-2.X plugin
+        * Version 1.8.3 was used for the GMS-1.X plugin, due to the needed 
+          VS2003 support)
+        * unpack to 3rdparty/hdf5
+ 
+3. Building
+======================================================================
+
+    3.1 Build zlib
+    --------------------------------------------------------------
+
+    This can be done from the Visual Studio command prompt. Go to the 
+    3rdparty/zlib directory and execute either
+        nmake -f win32/Makefile.msc LOC="-DASMV -DASMINF" OBJA="inffas32.obj match686.obj"
+    or
+        nmake -f win32/Makefile.msc
+
+    3.2 Build szip
+    --------------------------------------------------------------
+
+    For GMS-1.X:
+    * Copy the vc2003/szip_static_vs2003.vcproj file to 3rdparty/szip/window/static
+    * Open the 3rdparty/szip/windows/static/szip_static_vs2003.vcproj in Visual Studio 2003.
+
+    For GMS-2.X:
+    * Open the 3rdparty/szip/windows/static/szip_static.vcproj in Visual Studio 2008.
+    
+    The following steps are for both versions:
+    * Remove line "#define HAVE_ENCODING" in SZconfig.h
+    * Build the Release build
+
+    3.3 Build hdf5
+    --------------------------------------------------------------
+    
+    * Set up environment variables
+        HDF5_EXT_ZLIB=YOURDIR\3rdparty\zlib\zlib.lib
+        HDF5_EXT_SZIB=YOURDIR\3rdparty\szib\windows\static\lib\Win32\Release\libszip.lib
+    * Call windows\copy_hdf.bat
+    * For GMS-1.X: Open windows_vnet\proj\all\all.sln with Visual Studio 2003
+      For GMS-2.X: Open windows\proj\all\all.sln with Visual Studio 2008
+    * In Visual Studio add to the include directories (in Tools/Options/Projects and Solutions/VC++ Directories)
+        3rdparty\zlib
+        3rdparty\szib\src   
+    * IMPORTANT: In the "Release" configuration of the projects hdf5 set the Runtime Library (under
+      C/C++/Code Generation) to Multi-threaded DLL (/MD).
+    * Build the hdf5 project (Release build).
+
+    3.4 Build the plugin
+    --------------------------------------------------------------
+
+    GMS-2.X:
+    * Open vc2008/hdf5_plugin.vcproj with Visual Studio 2008
+    * Add your DMSDK include and library directories to the VC++ Directories 
+      in Visual Studio (in Tools/Options/Projects and Solutions/VC++ Directories). The
+      DMSDK is usally installed to C:\ProgramData\Gatan\DMSDK
+    * Build the Release build
+    * You should find your plugin as vc2008/Release/hdf5_plugin.dll
+
+    GMS-1.X:
+    * Open vc2003/hdf5_plugin.vcproj with Visual Studio 2003
+    * Add your DMSDK include and library directories to the VC++ Directories 
+      in Visual Studio (in Tools/Options/Projects/VC++ Directories). 
+    * Build the Release build
+    * You should find your plugin as vc2003/Release/hdf5_GMS1X_x86.dll
+
+    3.5 Building the documentation
+    --------------------------------------------------------------
+
+    The documentation requires the Sphinx Python tool (www.sphinx-doc.org).
+    With Sphinx/Python properly installed, simply change into the doc
+    directory and execute
+        make WHATEVER
+    to produce the documentation in the desired format. Call make 
+    without an argument to see a list of possible formats.
+    
+    Tested with Sphinx version 1.3
+    
+4. Testing
+======================================================================
+
+To run the tests, the unittest.s (in tests/unittest) script must be installed in DigitalMicrograph.
+Follow the instruction accompanied with the script for installation.
+
+The tests access some test data files, which are also in the tests directory. In order to 
+know that directory under DigitalMicrograph the tests must be immediately run after loading
+them into DigitalMicrograph. Otherwise the directory may not be discoverable anymore.
+
+The tests are designed to succeed under GMS-2.X. Under GMS-1.X some magic numbers and functionality
+is different. To run change the arguments of the following calls
+    
+    # Current directory
+    GMS-2.X: GetApplicationDirectory(0, 0)
+    GMS-1.X: GetApplicationDirectory(2, 0)
+
+    # Temporary directory
+    GMS-2.X: GetApplicationDirectory(6, 0)
+    GMS-1.X: GetApplicationDirectory(3, 0)
+
+A known issue is that the handling of packed complex data is different and currently only works under GMS 2.X.
+
+5. Install
+======================================================================
+
+The Visual Studio project files are designed to produce different outputs, depending on the
+combination of target GMS version and platform. The plugins produced are:
+
+    GMS-1.X (32 bit): vc2008\Release\hdf5_GMS1X_x86.dll
+    GMS-2.X (32 bit): vc2008\Release\hdf5_GMS2X_x86.dll
+    GMS-2.X (64 bit): vc2008\x64\Release\hdf5_GMS2X_amd64.dll
+
+For installation simply copy the correct DLL file into the plugin directory of your Digital
+Micrograph installation. By default these are:
+
+    GMS-2.X: c:\ProgramData\Gatan\Plugins
+    GMS-1.X: c:\Program Files\Gatan\DigitalMicrograph\Plugins
