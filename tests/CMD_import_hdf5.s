@@ -5,7 +5,6 @@
 //
 //  DESCRIPTION
 //      Import image(s) from HDF5 file
-//      Makes use of holopack.temlib
 //
 //  AUTHOR
 //      Tore Niermann
