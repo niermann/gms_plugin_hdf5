@@ -68,22 +68,17 @@ Functions of the plugin
     The attributes are returned as ``TagGroup``, where the keys are the names of the attributes and the
     values are their value. 
     
-    Only some type/dataspace combinations of attributes are supported. If the attribute's combination is not 
-    supported, it is missing in the returned ``TagGroup``. Supported combinations are:
+    Only some types of attributes are supported. If the attribute's type is not 
+    supported, it is missing in the returned ``TagGroup``. Supported types are:
     
         * **H5T_INTEGER: scalar** Returned as ``Number``. The value is clipped to a 32-bit integer.
-        * **H5T_INTEGER: simple** Returned as integer array. Only up to 4 dimensional arrays are supported.
-            In GMS-1.X the 64 bit integer arrays are not supported, thus the array is clipped to 32 bit integers.
-        * **H5T_FLOAT: scalar** Returned as ``Number``. The value is clipped to a 64-bit float.
-        * **H5T_FLOAT: simple** Returned as real array. Only up to 4 dimensional arrays are supported.
-        * **H5T_STRING: scalar** Returned as ``String``. 
-        * **H5T_STRING: simple** Returned as ``TagList`` of ``String``. Only 1 dimensional arrays are supported.
-        * **complex: scalar** Returned as ``Number``. The values are clipped to a 64-bit floats.
-        * **complex: simple** Returned as complex array. Only up to 4 dimensional arrays are supported.
+        * **H5T_FLOAT: scalar** Returned as ``Number``. 
+        * **H5T_STRING: scalar** Returned as ``String``. Fixed and variable length strings are returned. The strings are read as UTF-8 strings.
+        * **complex: scalar** Returned as ``Number``.
 
     .. note::
     
-        Colons are interpreted as TagGroup path separators, if invalid characters, e.g. "[" or "]", occur in the attribute name,
+        Colons are interpreted as TagGroup path separators. If invalid characters, e.g. "[" or "]", occur in the attribute name,
         the attributes are not read. 
 
     .. note::
@@ -94,10 +89,7 @@ Functions of the plugin
         
     .. note::
         
-        Integer/float/complex arrays are read into a special format. The attribute is read into a TagGroup, which contains a
-        tag "DataType" representing the DigitalMicrograph data type, a TagList "Dimensions" giving the extents of the array
-        and a tag "Data" containing the actual array. This is the same format, used internally by DigitalMicrograph to save
-        images into DM3 files. 
+        Integer/float/complex arrays are read as lists of the scalar values. Multidimensional arrays are read as list of lists.
 
 .. cpp:function:: bool h5_exists_attr(string filename, string location, string attr)
 
