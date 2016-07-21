@@ -83,32 +83,6 @@ static void read_scalar_attr(const char* attr_name, hid_t attr_id, hid_t type_id
     }
 }
 
-static void read_string_array_attr(const char* attr_name, hid_t attr_id, hid_t type_id, hid_t space_id, DM::TagGroup& tags)
-{
-    if (H5Tget_class(type_id) != H5T_STRING)
-        return;
-    hssize_t count = H5Sget_simple_extent_npoints(space_id);
-    if (count < 0)
-        return;
-    size_t elemsize = H5Tget_size(type_id);
-    if (elemsize < 0)
-        return;
-
-    type_handle_t strtype(H5Tcopy(H5T_C_S1));
-    H5Tset_strpad(strtype.get(), H5T_STR_NULLTERM);
-    H5Tset_size(strtype.get(), elemsize + 1);
-    H5Tset_cset(strtype.get(), H5T_CSET_UTF8);
-
-    std::vector<char> data((elemsize + 1) * (size_t)count);
-    if (H5Aread(attr_id, strtype.get(), &data[0]) < 0)
-        return;
-
-    // Create tag list
-    DM::TagGroup list = tags.CreateNewLabeledList(attr_name);
-    for (hssize_t i = 0; i < count; i++)
-        list.InsertTagAsString((long)i, from_UTF8(&data[(elemsize + 1) * (unsigned)i]));
-}
-
 static void read_array_attr(const char* attr_name, hid_t attr_id, hid_t type_id, hid_t space_id, DM::TagGroup& tags)
 {
     hssize_t size = H5Sget_simple_extent_npoints(space_id);
