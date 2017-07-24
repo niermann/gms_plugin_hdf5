@@ -67,7 +67,7 @@ void H5IMPORT_import_single(String filename, String name, Number append_name)
         }
         if (n < TagGroupCountTags(offset_group))
             if (TagGroupGetIndexedTagAsNumber(offset_group, n, offset))
-                ImageSetDimensionOrigin(array, n, offset / scale)
+                ImageSetDimensionOrigin(array, n, offset)
         if (n < TagGroupCountTags(unit_group))
             if (TagGroupGetIndexedTagAsString(unit_group, n, unit))
                 ImageSetDimensionUnitString(array, n, unit)
@@ -79,7 +79,7 @@ void H5IMPORT_import_single(String filename, String name, Number append_name)
         ImageSetIntensityScale(array, data_scale)
     Number data_offset = 0.0
     if (TagGroupGetTagAsNumber(attr, "offset", data_offset))
-        ImageSetIntensityOrigin(array, data_offset / data_scale)
+        ImageSetIntensityOrigin(array, data_offset)
     String data_unit
     if (TagGroupGetTagAsString(attr, "unit", data_unit))
         ImageSetIntensityUnitString(array, data_unit)
