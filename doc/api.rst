@@ -16,6 +16,8 @@ Functions of the plugin
     Gives informations about the HDF5 object *location* of file *filename*. If *location* is "/" the contents of the file is listed.
     The returned ``taggroup`` object contains keys depending on the type of the HDF5 object. 
     
+    .. tabularcolumns:: |p{0.15\linewidth}|p{0.20\linewidth}|p{0.55\linewidth}|
+
     +---------------+-------------------+-------------------------------------------------------------------+
     |Type           |Key                |Value                                                              |
     +===============+===================+===================================================================+
@@ -107,6 +109,15 @@ Functions of the plugin
     spaces with rank 0 to 4 are supported. On failure an invalid image is returned.
     
     Scalar dataspaces (rank 0) are returned as one dimensional image with one element.
+
+.. cpp:function:: string h5_read_string_dataset(string filename, string location)
+
+    Reads string dataset *location* from *filename*. This only works with datasets 
+    with ``DataTypeClass`` of "STRING" (see :func:`h5_info`). Only data spaces with one
+    single element are supported (scalars or arrays with one element). Strings are
+    assumed to be UTF-8 encoded.
+
+    On failure an invalid string is returned.
 
 .. cpp:function:: bool h5_create_dataset(string filename, string location, Image* data)
 

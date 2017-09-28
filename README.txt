@@ -5,7 +5,6 @@ This is a plugin allowing to read and write HDF5 files under
 DigitalMicrograph by Gatan Inc.
 
 Tested on 
-    DigitalMicrograph Version 1.8.X (32 Bit)
     DigitalMicrograph Version 2.3.X (32 Bit)
 
 Usage
@@ -32,7 +31,7 @@ this software have different licenses. See the license information
 in the documentation for details.
 
     HDF5 Plugin for DigitalMicrograph
-    Copyright (C) 2012-2016 Tore Niermann
+    Copyright (C) 2012-2017 Tore Niermann
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

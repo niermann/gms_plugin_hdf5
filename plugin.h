@@ -17,7 +17,7 @@
 #endif
 
 // Plugin version string
-#define HDF5_PLUGIN_VERSION     "1.0.0"
+#define HDF5_PLUGIN_VERSION     "1.1.0"
 
 // Uncomment for debug output
 //#define ENABLE_DEBUG
@@ -55,6 +55,7 @@ bool                  h5_exists_attr(const char* filename, DM_StringToken locati
 bool                  h5_create_dataset_from_image(const char* filename, DM_StringToken location, DM_ImageToken image_token);
 bool                  h5_create_dataset_simple(const char* filename, DM_StringToken location, long datatype, DM_TagGroupToken size_token);
 DM_ImageToken_1Ref    h5_read_dataset_all(const char* filename, DM_StringToken location);
+DM_StringToken_1Ref   h5_read_string_dataset(const char* filename, DM_StringToken location);
 
 //----------------------------------------------------------------------------------------
 // Utility functions (utils.cpp)
