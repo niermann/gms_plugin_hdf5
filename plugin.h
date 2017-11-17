@@ -17,7 +17,7 @@
 #endif
 
 // Plugin version string
-#define HDF5_PLUGIN_VERSION     "1.1.0"
+#define HDF5_PLUGIN_VERSION     "1.2.0"
 
 // Uncomment for debug output
 //#define ENABLE_DEBUG
@@ -55,6 +55,9 @@ bool                  h5_exists_attr(const char* filename, DM_StringToken locati
 bool                  h5_create_dataset_from_image(const char* filename, DM_StringToken location, DM_ImageToken image_token);
 bool                  h5_create_dataset_simple(const char* filename, DM_StringToken location, long datatype, DM_TagGroupToken size_token);
 DM_ImageToken_1Ref    h5_read_dataset_all(const char* filename, DM_StringToken location);
+DM_ImageToken_1Ref    h5_read_dataset_slice1(const char* filename, DM_StringToken location, DM_TagGroupToken offset_token, long dim0, long count0, long stride0);
+DM_ImageToken_1Ref    h5_read_dataset_slice2(const char* filename, DM_StringToken location, DM_TagGroupToken offset_token, long dim0, long count0, long stride0, long dim1, long count1, long stride1);
+DM_ImageToken_1Ref    h5_read_dataset_slice3(const char* filename, DM_StringToken location, DM_TagGroupToken offset_token, long dim0, long count0, long stride0, long dim1, long count1, long stride1, long dim2, long count2, long stride2);
 DM_StringToken_1Ref   h5_read_string_dataset(const char* filename, DM_StringToken location);
 
 //----------------------------------------------------------------------------------------
@@ -111,30 +114,35 @@ type_handle_t create_compatible_complex_type(hid_t type_id) throw();
 bool image_to_HDF(Gatan::DM::Image image, type_handle_t& type, space_handle_t& space);
 
 /**
- * Converts HDF data type to DM data type. On success, memtype_id
- * contains the memory data type. The caller is responsible for closing the type.
+ * Converts HDF data type to DM data type.
  * @param type_id HDF Type. 
- * @param memtype OUT: HDF Type to read. Caller is responsible for closing it.
  * @returns Data type on success, <0 on failure.
  */
-long datatype_from_HDF(hid_t type_id, type_handle_t& memtype);
+long datatype_from_HDF(hid_t type_id);
 
 /**
- * Converts DM data typ to HDF data type. The caller is responsible for closing the returned type.
+ * Converts DM data typ to HDF data type.
  * @param datatype DM Data Type 
  * @returns Data type on success, invalid type on failure.
  */
 type_handle_t datatype_to_HDF(long datatype);
 
 /**
- * Creates DM image from data space and data type. On success, memtype_id
- * contains the memory data type. The caller is responsible for closing the type.
- * @param type_id HDF Type. 
- * @param space_id HDF DataSpace.
- * @param memtype OUT: HDF Type to read. Caller is responsible for closing it.
+ * Creates DM image from dimension list and data type.
+ * @param datatype DM Datatype. 
+ * @param rank Number of dimensions
+ * @param dims Extents of the individual dimensions (HDF5 order)
  * @returns Image on success.
  */
-Gatan::DM::Image image_from_HDF(hid_t type_id, hid_t space_id, type_handle_t& memtype);
+Gatan::DM::Image create_image(long datatype, int rank, const hsize_t* dims);
+
+/**
+ * Reads space descriptor into hsize array.
+ * @param space_id HDF Dataspace. 
+ * @param dims OUT: Extents of the individual dimensions
+ * @return Number of dimensions (rank), <0 on failure
+ */
+int hsize_array_from_HDF5(int space_id, std::vector<hsize_t>& dims);
 
 /** 
  * Convert hsize_t[] array to DM tag list. Reverses order of entries, since

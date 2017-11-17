@@ -41,6 +41,9 @@ void HDF5Plugin::Start()
     AddFunction("bool h5_create_dataset(string filename, dm_string location, Image* data)", &h5_create_dataset_from_image);
     AddFunction("bool h5_create_dataset(string filename, dm_string location, long dtype, TagGroup size)", &h5_create_dataset_simple);
     AddFunction("ImageRef h5_read_dataset(string filename, dm_string location)", &h5_read_dataset_all);
+    AddFunction("ImageRef h5_read_dataset_slice1(string filename, dm_string location, TagGroup offsets, long dim0, long count0, long stride0)", &h5_read_dataset_slice1);
+    AddFunction("ImageRef h5_read_dataset_slice2(string filename, dm_string location, TagGroup offsets, long dim0, long count0, long stride0, long dim1, long count1, long stride1)", &h5_read_dataset_slice2);
+    AddFunction("ImageRef h5_read_dataset_slice3(string filename, dm_string location, TagGroup offsets, long dim0, long count0, long stride0, long dim1, long count1, long stride1, long dim1, long count2, long stride2)", &h5_read_dataset_slice3);
     AddFunction("dm_string h5_read_string_dataset(string filename, dm_string location)", &h5_read_string_dataset);
 }
 

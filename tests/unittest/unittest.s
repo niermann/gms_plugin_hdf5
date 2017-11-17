@@ -204,6 +204,22 @@ class TestCase : Object
                   + "Expected valid image.")
     }
 
+    // Assert object is not valid
+    void assert_not_valid(Object self, String info, Object &obj)
+    {
+        if (ScriptObjectIsValid(obj))
+            Throw("Failure : " + info + "\n" \
+                  + "Expected invalid object.")
+    }
+
+    // Assert image is not valid
+    void assert_not_valid(Object self, String info, Image &img)
+    {
+        if (ImageIsValid(img))
+            Throw("Failure : " + info + "\n" \
+                  + "Expected invalid image.")
+    }
+
     // Assert taggroup is valid
     void assert_valid(Object self, String info, TagGroup &tags)
     {

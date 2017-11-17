@@ -228,83 +228,78 @@ bool image_to_HDF(DM::Image image, type_handle_t& type, space_handle_t& space)
     return true;
 }
 
-long datatype_from_HDF(hid_t type_id, type_handle_t& memtype)
+long datatype_from_HDF(hid_t type_id)
 {
     if (type_id < 0)
         return -1;
 
     size_t elemsize = H5Tget_size(type_id);
-    
+
     switch (H5Tget_class(type_id)) {
     case H5T_FLOAT:
-        if (elemsize <= 4) {
-            memtype.reset(H5Tcopy(H5T_NATIVE_FLOAT));
+        if (elemsize <= 4)
             return ImageData::REAL4_DATA;
-        } else {
-            memtype.reset(H5Tcopy(H5T_NATIVE_DOUBLE));
+        else
             return ImageData::REAL8_DATA;
-        }
         break;
 
     case H5T_INTEGER:
         if (H5Tget_sign(type_id)) {
-            if (elemsize == 1) {
-                memtype.reset(H5Tcopy(H5T_NATIVE_INT8));
+            if (elemsize == 1)
                 return ImageData::SIGNED_INT8_DATA;
-            } else if (elemsize == 2) {
-                memtype.reset(H5Tcopy(H5T_NATIVE_INT16));
+            else if (elemsize == 2)
                 return ImageData::SIGNED_INT16_DATA;
 #if GMS_VERSION_MAJOR >= 2
-            } else if (elemsize <= 4) {
-                memtype.reset(H5Tcopy(H5T_NATIVE_INT32));
+            else if (elemsize <= 4)
                 return ImageData::SIGNED_INT32_DATA;
-            } else {
-                memtype.reset(H5Tcopy(H5T_NATIVE_INT64));
+            else
                 return undocumented_SIGNED_INT64_DATA;
 #else // GMS_VERSION_MAJOR < 2
-            } else {
-                memtype.reset(H5Tcopy(H5T_NATIVE_INT32));
+            else
                 return ImageData::SIGNED_INT32_DATA;
 #endif // GMS_VERSION_MAJOR
-            }
         } else {
-            if (elemsize == 1) {
-                memtype.reset(H5Tcopy(H5T_NATIVE_UINT8));
+            if (elemsize == 1)
                 return ImageData::UNSIGNED_INT8_DATA;
-            } else if (elemsize == 2) {
-                memtype.reset(H5Tcopy(H5T_NATIVE_UINT16));
+            else if (elemsize == 2)
                 return ImageData::UNSIGNED_INT16_DATA;
 #if GMS_VERSION_MAJOR >= 2
-            } else if (elemsize <= 4) {
-                memtype.reset(H5Tcopy(H5T_NATIVE_UINT32));
+            else if (elemsize <= 4)
                 return ImageData::UNSIGNED_INT32_DATA;
-            } else {
-                memtype.reset(H5Tcopy(H5T_NATIVE_UINT64));
+            else
                 return undocumented_UNSIGNED_INT64_DATA;
 #else // GMS_VERSION_MAJOR < 2
-            } else {
-                memtype.reset(H5Tcopy(H5T_NATIVE_UINT32));
+            else
                 return ImageData::UNSIGNED_INT32_DATA;
 #endif // GMS_VERSION_MAJOR
-            }
         }
         break;
 
     case H5T_COMPOUND:
-        memtype = create_compatible_complex_type(type_id);
-        if (!memtype.valid())
+        // Compound of two floats ?
+        if (H5Tget_nmembers(type_id) != 2)
+            return -1;
+        if (H5Tget_member_class(type_id, 0) != H5T_FLOAT || H5Tget_member_class(type_id, 1) != H5T_FLOAT)
             return -1;
 
-        switch (H5Tget_size(memtype.get())) {
-        case 8:  
-            return ImageData::COMPLEX8_DATA;
-        case 16: 
-            return ImageData::COMPLEX16_DATA;
-        default:
-            warning("datatype_from_HDF: You should never get here.");
-            memtype.reset();
-            return -1;
+        // Floats named something like "real" and "imag" ?
+        {
+            char* field0 = H5Tget_member_name(type_id, 0);
+            char* field1 = H5Tget_member_name(type_id, 1);
+            bool real_and_imag = (_stricmp("r", field0) == 0 && _stricmp("i", field1) == 0) 
+                              || (_stricmp("re", field0) == 0 && _stricmp("im", field1) == 0)
+                              || (_stricmp("real", field0) == 0 && _stricmp("imag", field1) == 0);
+            free(field0);
+            free(field1);
+            if (!real_and_imag)
+                return -1;
         }
+
+        if (H5Tget_size(type_id) <= 8)
+            return ImageData::COMPLEX8_DATA;
+        else
+            return ImageData::COMPLEX16_DATA;
+        break;
 
     default:
         break;
@@ -332,38 +327,43 @@ type_handle_t datatype_to_HDF(long datatype)
     }
 }
 
-DM::Image image_from_HDF(hid_t type_id, hid_t space_id, type_handle_t& memtype)
+DM::Image create_image(long datatype, int rank, const hsize_t* dims)
 {
-    if (type_id < 0 || space_id < 0)
-        return DM::Image();
-    if (H5Sis_simple(space_id) <= 0)
-        return DM::Image();
-
-    long dm_type = datatype_from_HDF(type_id, memtype);
-    if (dm_type < 0)
-        return DM::Image();
-
-    int rank = H5Sget_simple_extent_ndims(space_id);
-    if (rank == 0) {
-        // Scalar: read as one element image.
-        return DM::NewImage("", dm_type, (uint32)1);
-    } else if (rank < 0 || rank > 4)
-        return DM::Image();
-
-    hsize_t dims[4];
-    if (H5Sget_simple_extent_dims(space_id, dims, NULL) < 0)
+    if (datatype < 0)
         return DM::Image();
 
     switch (rank) {
-        case 1: return DM::NewImage("", dm_type, (uint32)dims[0]);
-        case 2: return DM::NewImage("", dm_type, (uint32)dims[1], (uint32)dims[0]);
-        case 3: return DM::NewImage("", dm_type, (uint32)dims[2], (uint32)dims[1], (uint32)dims[0]);
-        case 4: return DM::NewImage("", dm_type, (uint32)dims[3], (uint32)dims[2], (uint32)dims[1], (uint32)dims[0]);
+        case 0: return DM::NewImage("", datatype, (uint32)1);   // Scalar: read as one element image.
+        case 1: return DM::NewImage("", datatype, (uint32)dims[0]);
+        case 2: return DM::NewImage("", datatype, (uint32)dims[1], (uint32)dims[0]);
+        case 3: return DM::NewImage("", datatype, (uint32)dims[2], (uint32)dims[1], (uint32)dims[0]);
+        case 4: return DM::NewImage("", datatype, (uint32)dims[3], (uint32)dims[2], (uint32)dims[1], (uint32)dims[0]);
         default:
-            warning("image_from_HDF: You should never get here.");
-            memtype.reset();
+            warning("create_image: Unsupported rank: %d.", rank);
             return DM::Image();
     }
+}
+
+int hsize_array_from_HDF5(int space_id, std::vector<hsize_t>& dims)
+{
+    dims.clear();
+
+    if (!H5Sis_simple(space_id))
+        return -1;
+
+    int rank = H5Sget_simple_extent_ndims(space_id);
+    if (rank < 0)
+        return -1;
+
+    if (rank > 0) {
+        dims.resize(rank);
+        if (H5Sget_simple_extent_dims(space_id, &dims[0], NULL) < 0) {
+            dims.clear();
+            return -1;
+        }
+    }
+
+    return dims.size();
 }
 
 Gatan::DM::TagGroup taglist_from_hsize_array(const hsize_t* ptr, int size)

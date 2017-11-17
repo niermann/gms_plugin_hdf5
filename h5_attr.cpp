@@ -223,33 +223,6 @@ static void read_array_attr(const char* attr_name, hid_t attr_id, hid_t type_id,
     tags.SetTagAsTagGroup(attr_name, list[0]);
 }
 
-static void read_array_attr_old(const char* attr_name, hid_t attr_id, hid_t type_id, hid_t space_id, DM::TagGroup& tags)
-{
-    type_handle_t memtype;
-    DM::Image image = image_from_HDF(type_id, space_id, memtype);
-    if (!image.IsValid())
-        return;
-
-    herr_t err;
-    {
-        PlugIn::ImageDataLocker imageLock(image, PlugIn::ImageDataLocker::lock_data_WONT_READ
-                                               | PlugIn::ImageDataLocker::lock_data_CONTIGUOUS);
-        err = H5Aread(attr_id, memtype.get(), imageLock.get());
-        image.DataChanged();
-    }
-
-    if (err >= 0) {
-        DM::TagGroup dataTags = tags.CreateNewLabeledGroup(attr_name);
-        dataTags.SetTagAsLong("DataType", image.GetDataType());
-
-        DM::TagGroup dimTags = dataTags.CreateNewLabeledList("Dimensions");
-        for (unsigned i = 0; i < image.GetNumDimensions(); ++i)
-            dimTags.InsertTagAsLong(0x7ffffffful, image.GetDimensionSize(i));
-
-        dataTags.SetTagAsArray("Data", image);
-    }
-}
-
 static herr_t attr_iterator(hid_t loc_id, const char *attr_name, const H5A_info_t *ainfo, DM::TagGroup *tags)
 {
     // Open attribute

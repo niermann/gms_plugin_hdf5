@@ -183,8 +183,7 @@ static void get_type_info(hid_t type_id, DM::TagGroup& tags)
         break;
     }
 
-    type_handle_t memtype;
-    long dtype = datatype_from_HDF(type_id, memtype);
+    long dtype = datatype_from_HDF(type_id);
     if (dtype >= 0)
         tags.SetTagAsLong("DataType", dtype);
 }
