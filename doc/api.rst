@@ -83,15 +83,13 @@ Functions of the plugin
         Colons are interpreted as TagGroup path separators. If invalid characters, e.g. "[" or "]", occur in the attribute name,
         the attributes are not read. 
 
-    .. note::
-    
         DigitalMicrograph only supports 8 bit tag names, but it is undocumented how these tag names are
         encoded. The attribute names on the other side, might contain unicode characters. This function
-        encodes the attribute name in UTF8 (See :ref:`string-encoding-label`
-        
-    .. note::
+        encodes the attribute name in UTF8 (See :ref:`string-encoding-label`)
         
         Integer/float/complex arrays are read as lists of the scalar values. Multidimensional arrays are read as list of lists.
+        
+        The sizes compared to the HDF5 file are reported in reversed order (see :ref:`data-spaces-label`).
 
 .. cpp:function:: bool h5_exists_attr(string filename, string location, string attr)
 
@@ -109,6 +107,75 @@ Functions of the plugin
     spaces with rank 0 to 4 are supported. On failure an invalid image is returned.
     
     Scalar dataspaces (rank 0) are returned as one dimensional image with one element.
+
+.. cpp:function:: image h5_read_dataset_slice1(string filename, string location, TagGroup offset, number dim0, number count0, number stride0)
+
+    Reads 1D subset of dataset *location* from *filename*. This method can be used to read a one
+    dimensional slice along an arbitrary dimension from a higher dimensional dataset. 
+    
+    *offset* is a TagList of numbers, where the index of the first element of the returned
+    array for all dimensions of the dataset is given. The tag list must have a size corresponding
+    to the number of dimensions.
+    
+    *dim0* is the dimension along which the slice is returned, *count0* the number of elements
+    in the slice. *stride0* the distance between adjacent elements in the returned slice (e.g. a 
+    *stride0* of 2 will return only every second element).
+    
+    Only some data types are supported (see :ref:`data-types-label`). For order of
+    dimensions see :ref:`data-spaces-label`. Strides must be > 0.
+
+    On failure an invalid image is returned.
+
+.. cpp:function:: image h5_read_dataset_slice2(string filename, string location, TagGroup offset, number dim0, number count0, number stride0, number dim1, number count1, number stride1)
+
+    Reads 2D subset of dataset *location* from *filename*. This method can be used to read a two
+    dimensional slice along an arbitrary dimension from a higher dimensional dataset. 
+    
+    *offset* is a TagList of numbers, where the index of the first element of the returned
+    array for all dimensions of the dataset is given. The tag list must have a size corresponding
+    to the number of dimensions.
+    
+    *dim0* is the X-dimension along which the slice is returned, *count0* the number of elements
+    in the slice. *stride0* the distance between adjacent elements in the returned slice (e.g. a 
+    *stride0* of 2 will return only every second element).
+
+    *dim1* is the Y-dimension along which the slice is returned, *count1* the number of elements
+    in this direction. *stride1* the distance between adjacent elements. 
+    
+    Due to a limitation of the underlying HDF5 library the order of the dimensions must be 
+    increasing, i.e. *dim0* < *dim1*. Using this call to transpose the dataset is not possible.
+    
+    Only some data types are supported (see :ref:`data-types-label`). For order of
+    dimensions see :ref:`data-spaces-label`. Strides must be > 0.
+
+    On failure an invalid image is returned.
+
+.. cpp:function:: image h5_read_dataset_slice3(string filename, string location, TagGroup offset, number dim0, number count0, number stride0, number dim1, number count1, number stride1, number dim2, number count2, number stride2)
+
+    Reads 3D subset of dataset *location* from *filename*. This method can be used to read a three
+    dimensional slice along an arbitrary dimension from a higher dimensional dataset. 
+    
+    *offset* is a TagList of numbers, where the index of the first element of the returned
+    array for all dimensions of the dataset is given. The tag list must have a size corresponding
+    to the number of dimensions.
+    
+    *dim0* is the X-dimension along which the slice is returned, *count0* the number of elements
+    in the slice. *stride0* the distance between adjacent elements in the returned slice (e.g. a 
+    *stride0* of 2 will return only every second element).
+
+    *dim1* is the Y-dimension along which the slice is returned, *count1* the number of elements
+    in this direction. *stride1* the distance between adjacent elements. 
+
+    *dim2* is the Z-dimension along which the slice is returned, *count2* the number of elements
+    in this direction. *stride2* the distance between adjacent elements. 
+    
+    Due to a limitation of the underlying HDF5 library the order of the dimensions must be 
+    increasing, i.e. *dim0* < *dim1* < *dim2*. Using this call to transpose the dataset is not possible.
+    
+    Only some data types are supported (see :ref:`data-types-label`). For order of
+    dimensions see :ref:`data-spaces-label`. Strides must be > 0.
+
+    On failure an invalid image is returned.
 
 .. cpp:function:: string h5_read_string_dataset(string filename, string location)
 

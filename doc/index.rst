@@ -9,6 +9,3 @@ Contents:
     api
     remarks
     license
-
-* :ref:`genindex`
-

@@ -64,6 +64,31 @@ Data types
     |40     |Integer 8 Unsigned |HDF_NATIVE_UINT64  |Only supported in GMS versions >= 2.0      |
     +-------+-------------------+-------------------+-------------------------------------------+
 
+.. _data-spaces-label:
+
+Dataspaces
+----------
+
+    Multidimensional datasets in HDF5 files are stored in a column-major (a.k.a. C style) order. 
+    This means that items with successive indices in the last dimension are stored in adjacent 
+    file positions, while items with successive indices in the non-last dimensions are
+    stored non-adjacently.
+
+    Digital Micrograph on the opposite has a row-major (a.k.a. Fortran style) order. Items with 
+    successive indices in the first dimension are stored in adjacent memory positions, while 
+    items with successive indices in the non-first dimensions are stored non-adjacently.
+
+    Typical 3D datasets are stored in a way, that adjacent items in X direction are stored adjacently,
+    while adjacent items in Y direction are stored farer apart, and adjacent items in Z direction are 
+    stored even farer apart. For HDF5 storage such a dataset is indexed as ``[Z,Y,X]`` while for
+    Digital Micrograph it is indexed as ``[X,Y,Z]``.
+    
+    In order to adjust for this differences, the order of all indices is reversed by the
+    plugin. The first dimension in a plugin call, always refers to the last dimension in the
+    HDF5 dataset and vice-versa.
+
+    For more details on ordering see for instance the `Wikipedia article <https://en.wikipedia.org/wiki/Row-_and_column-major_order>`_.
+
 .. _string-encoding-label:
 
 String encoding and file names
