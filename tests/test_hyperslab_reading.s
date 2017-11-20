@@ -184,7 +184,7 @@ class Test_H5_Hyperslab_Reading: TestCase
         
         // Only 3 offsets
         Image data := h5_read_dataset_slice2(_file_path, "data", offsets, 0, 16, 1, 3, 5, 3)
-        self.assert_not_valid("invalid offsets", data)
+        self.assert_not_valid("invalid offsets (size)", data)
         offsets.TagGroupInsertTagAsLong(infinity(), 0)
         
         // Invalid dimension
@@ -198,8 +198,13 @@ class Test_H5_Hyperslab_Reading: TestCase
         self.assert_not_valid("invalid dimension order", data)
 
         // Invalid stride
-        data := h5_read_dataset_slice2(_file_path, "data", offsets, 0, 16, 1, 0, 5, 0)
+        data := h5_read_dataset_slice2(_file_path, "data", offsets, 0, 16, 1, 1, 5, 0)
         self.assert_not_valid("invalid stride", data)
+
+        // Invalid offset
+        offsets.TagGroupSetIndexedTagAsString(2, "Blabla")
+        data := h5_read_dataset_slice2(_file_path, "data", offsets, 0, 16, 1, 1, 5, 1)
+        self.assert_not_valid("invalid offsets (type)", data)
     }
 
     Test_H5_Hyperslab_Reading(Object self)
