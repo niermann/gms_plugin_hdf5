@@ -152,7 +152,7 @@ DM_ImageToken_1Ref h5_read_dataset_all(const char* filename, DM_StringToken loca
             return NULL;
         }
 
-        image = create_image(dtype, dims.size(), &dims[0]);
+        image = create_image(dtype, dims.size(), dims.empty() ? NULL : &dims[0]);
         if (!image.IsValid()) {
             warning("h5_read_dataset: Can't create image.");
             return NULL;
