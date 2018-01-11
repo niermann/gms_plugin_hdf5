@@ -96,7 +96,8 @@ Required libraries:
     * Open vc2008/hdf5_plugin.vcproj with Visual Studio 2008
     * Add your DMSDK include and library directories to the VC++ Directories 
       in Visual Studio (in Tools/Options/Projects and Solutions/VC++ Directories). The
-      DMSDK is usally installed to C:\ProgramData\Gatan\DMSDK
+      DMSDK is usally installed to C:\ProgramData\Gatan\DMSDK. Also the include
+      path to the boost library is needed.
     * Build the Release build
     * You should find your plugin as vc2008/Release/hdf5_plugin.dll
 
