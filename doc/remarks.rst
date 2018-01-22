@@ -59,9 +59,9 @@ Data types
     |13     |Complex 16         |HDF_COMPOUND       |See :ref:`complex-types-label`             |
     |       |                   |                   |PackedComplex 16 is also saved as this type|
     +-------+-------------------+-------------------+-------------------------------------------+
-    |39     |Integer 8 Signed   |HDF_NATIVE_INT64   |Only supported in GMS versions >= 2.0      |
+    |39     |Integer 8 Signed   |HDF_NATIVE_INT64   |Only partially supported by DM.            |
     +-------+-------------------+-------------------+-------------------------------------------+
-    |40     |Integer 8 Unsigned |HDF_NATIVE_UINT64  |Only supported in GMS versions >= 2.0      |
+    |40     |Integer 8 Unsigned |HDF_NATIVE_UINT64  |Only partially supported by DM.            |
     +-------+-------------------+-------------------+-------------------------------------------+
 
 .. _data-spaces-label:

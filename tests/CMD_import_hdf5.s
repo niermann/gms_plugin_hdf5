@@ -10,7 +10,7 @@
 //      Tore Niermann
 //
 //  REQUIREMENTS
-//      HDF5 plugin version 1.0.0
+//      HDF5 plugin version >= 1.0
 //
 //**************************************************************************
 
@@ -116,7 +116,7 @@ String H5IMPORT_get_data_type_name(Number dtype)
         return "Complex128"
     else if (dtype == 39)
         return "Int64"
-    else if (dtype == 30)
+    else if (dtype == 40)
         return "UInt64"
     else
         return "<Unknown>"
