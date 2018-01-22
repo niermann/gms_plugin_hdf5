@@ -6,6 +6,7 @@ Contents:
 .. toctree::
     :titlesonly:
 
+    about
     api
     remarks
     license

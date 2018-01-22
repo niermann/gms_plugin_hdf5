@@ -7,6 +7,11 @@ DigitalMicrograph by Gatan Inc.
 Tested on 
     DigitalMicrograph Version 2.3.X (32 Bit)
 
+For current versions and updates look at GitHub:
+    https://github.com/niermann/gms_plugin_hdf5
+
+Please also use the GitHub site for error reports and feature request.
+
 Usage
 =====
 
@@ -31,7 +36,7 @@ this software have different licenses. See the license information
 in the documentation for details.
 
     HDF5 Plugin for DigitalMicrograph
-    Copyright (C) 2012-2017 Tore Niermann
+    Copyright (C) 2012-2018 Tore Niermann
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,7 +51,7 @@ in the documentation for details.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-* For copyright / license information see doc/license.rst file.
+For copyright / license information see doc/license.rst file.
 
 Disclaimer
 ==========
@@ -59,4 +64,4 @@ Author & Contact
 ================
 
 The plugin was written by Tore Niermann.
-Email: niermann at physik.tu-berlin.de
+Email: tore.niermann at tu-berlin.de

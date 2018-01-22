@@ -1,8 +1,28 @@
 Licenses
 ========
 
-The HDF5 plugin itself is available under the GNU General Public License, 
-either version 3 of the License, or (at your option) any later version.
+The plugin itself is licensed under GPL v3+ (see below). Other parts of
+this software have different licenses. See the license information below
+for details.
+
+HDF5 Plugin for DigitalMicrograph
+Copyright (C) 2012-2018 Tore Niermann
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Library licenses
+================
 
 The plugin uses a variety of other libraries, which are not licensed under
 the GPL license, but under there own licenses, which are included in the sections:
