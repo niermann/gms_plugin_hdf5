@@ -10,6 +10,10 @@ For current versions and updates look at GitHub:
     
     https://github.com/niermann/gms_plugin_hdf5
 
+Binaries can be also found at GitHub in the releases section:
+
+    https://github.com/niermann/gms_plugin_hdf5/releases
+
 ..
 
 	Please also use the GitHub site for error reports and feature request.
